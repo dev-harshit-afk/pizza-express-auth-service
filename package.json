@@ -1,0 +1,20 @@
+{
+  "name": "pizza-express-auth-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev":"node src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dev-harshit-afk/pizza-express-auth-service.git"
+  },
+  "author": "harshit thakur",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dev-harshit-afk/pizza-express-auth-service/issues"
+  },
+  "homepage": "https://github.com/dev-harshit-afk/pizza-express-auth-service#readme"
+}
