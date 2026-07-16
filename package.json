@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev":"node src/server.js",
+    "dev": "node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/dev-harshit-afk/pizza-express-auth-service/issues"
   },
-  "homepage": "https://github.com/dev-harshit-afk/pizza-express-auth-service#readme"
+  "homepage": "https://github.com/dev-harshit-afk/pizza-express-auth-service#readme",
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "^7.0.2"
+  }
 }
