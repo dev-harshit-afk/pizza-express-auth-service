@@ -6,6 +6,7 @@ function a(x: number) {
         d:1
     }
     const a=z.d;
+    console.log(a);
 }
 
 a(1);
