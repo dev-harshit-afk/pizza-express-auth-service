@@ -1,17 +1,17 @@
-import { Config } from "./config/index.js";
+import app from "./config/app.ts";
+import { Config } from "./config/index.ts";
 
-console.log("Server is running on port 3000");
+const startServer = () => {
+  const PORT = Config.PORT;
 
-const PORT = Config.PORT;
+  try {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Error starting server:", error);
+    process.exit(1);
+  }
+};
 
-function a(x: number) {
-  console.log(x);
-  const z = {
-    d: 1,
-  };
-  const a = z.d;
-  console.log(a);
-  console.log("servering running on", PORT);
-}
-
-a(1);
+startServer();
