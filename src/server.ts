@@ -1,4 +1,4 @@
-import app from "./config/app.ts";
+import app from "./app.ts";
 import { Config } from "./config/index.ts";
 import logger from "./config/logger.ts";
 
