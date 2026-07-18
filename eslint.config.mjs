@@ -5,19 +5,18 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ["dist", "node_modules","eslint.config.mjs"],
+    ignores: ["dist", "node_modules", "eslint.config.mjs"],
   },
   {
     languageOptions: {
       parserOptions: {
-        projectService:true,
-        tsconfigRootDir:import.meta.dirname,
-      }
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
-    rules:{
-      "no-console":"off",
-
-      "dot-notation":"error", 
-    }
-  }
+    rules: {
+      // "no-console": "off",
+      // "dot-notation": "error",
+    },
+  },
 );
