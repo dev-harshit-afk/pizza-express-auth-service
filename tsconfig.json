@@ -13,7 +13,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     // For nodejs:
-    // "lib": ["esnext"],
+    "lib": ["ES6"],
     // "types": ["node"],
     // and npm install -D @types/node
 
@@ -41,6 +41,8 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   }
 }
