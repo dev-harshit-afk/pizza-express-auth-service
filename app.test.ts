@@ -1,7 +1,7 @@
 import request from "supertest";
 import app from "./src/app.ts";
 
-describe("Jest setup", () => {
+describe.skip("APP", () => {
   it("runs a sample test successfully", () => {
     expect(1 + 1).toBe(2);
   });

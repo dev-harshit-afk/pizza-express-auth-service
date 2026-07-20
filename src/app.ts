@@ -5,12 +5,15 @@ import express, {
 } from "express";
 import type { HttpError } from "http-errors";
 import logger from "./config/logger.ts";
+import authRoutes from "./routes/auth.ts";
 
 const app = express();
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
+
+app.use("/auth", authRoutes);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
