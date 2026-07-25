@@ -99,7 +99,41 @@ describe("POST /auth/register", () => {
       const userRepository = connection.getRepository(User);
       const users = await userRepository.find();
       expect(users[0]).toHaveProperty("role");
-      expect(users[0].role).toBe(Roles.CUSTOMER);
+      expect(users[0]?.role).toBe(Roles.CUSTOMER);
+    });
+    it("should hash the password", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        password: "password123",
+      };
+
+      await request(app).post("/auth/register").send(userData);
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+
+      expect(users[0]?.password).not.toBe(userData.password);
+      expect(users[0]?.password).toHaveLength(60);
+      expect(users[0]?.password).toMatch(/^\$2b\$.{56}$/); // bcrypt hash format
+    });
+    it("should return 400 status code if the email already exists", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        password: "password123",
+        role: Roles.CUSTOMER,
+      };
+
+      const userRepository = connection.getRepository(User);
+      await userRepository.save(userData);
+      const response = await request(app).post("/auth/register").send(userData);
+      const users = await userRepository.find();
+
+      expect(response.statusCode).toBe(400);
+      expect(users).toHaveLength(1); // Ensure no new user was created
     });
   });
 });
