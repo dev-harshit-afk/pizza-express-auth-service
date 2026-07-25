@@ -8,23 +8,22 @@ import { Roles } from "../../constants/index.ts";
 //technique below is AAA, Arrange, Act, Assert
 
 describe("POST /auth/register", () => {
+  let connection: DataSource;
+
+  beforeAll(async () => {
+    connection = await AppDataSource.initialize();
+  });
+
+  beforeEach(async () => {
+    //remove data
+    await connection.dropDatabase();
+    await connection.synchronize();
+  });
+
+  afterAll(async () => {
+    await connection.destroy();
+  });
   describe("when the request body is valid", () => {
-    let connection: DataSource;
-
-    beforeAll(async () => {
-      connection = await AppDataSource.initialize();
-    });
-
-    beforeEach(async () => {
-      //remove data
-      await connection.dropDatabase();
-      await connection.synchronize();
-    });
-
-    afterAll(async () => {
-      await connection.destroy();
-    });
-
     it("should send 200 code", async () => {
       // Arrange
       const user = {
@@ -134,6 +133,22 @@ describe("POST /auth/register", () => {
 
       expect(response.statusCode).toBe(400);
       expect(users).toHaveLength(1); // Ensure no new user was created
+    });
+  });
+  describe("when the request body is invalid", () => {
+    it("should return 400 status code if email is missing", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "",
+        password: "password123",
+      };
+
+      const res = await request(app).post("/auth/register").send(userData);
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(res.statusCode).toBe(400);
+      expect(users).toHaveLength(0);
     });
   });
 });
