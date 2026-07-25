@@ -2,6 +2,7 @@ import type { Repository } from "typeorm";
 import { User } from "../entities/User.ts";
 import type { UserData } from "../types/index.ts";
 import createHttpError from "http-errors";
+import { Roles } from "../constants/index.ts";
 
 export class UserService {
   constructor(private userRepository: Repository<User>) {}
@@ -12,6 +13,7 @@ export class UserService {
         lastName,
         email,
         password,
+        role: Roles.CUSTOMER, // Assign the customer role when creating a new user
       });
 
       return userData;

@@ -2,8 +2,8 @@ import request from "supertest";
 import app from "../../app.ts";
 import type { DataSource } from "typeorm";
 import { AppDataSource } from "../../config/data-source.ts";
-import { truncateTable } from "../utils/index.ts";
 import { User } from "../../entities/User.ts";
+import { Roles } from "../../constants/index.ts";
 
 //technique below is AAA, Arrange, Act, Assert
 
@@ -17,7 +17,8 @@ describe("POST /auth/register", () => {
 
     beforeEach(async () => {
       //remove data
-      await truncateTable(connection);
+      await connection.dropDatabase();
+      await connection.synchronize();
     });
 
     afterAll(async () => {
@@ -84,6 +85,21 @@ describe("POST /auth/register", () => {
       const users = await userRepository.find();
       expect(users).toHaveLength(1);
       expect(id).toBe(users[0]?.id);
+    });
+    it("should assign customer role", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        password: "password123",
+      };
+
+      await request(app).post("/auth/register").send(userData);
+
+      const userRepository = connection.getRepository(User);
+      const users = await userRepository.find();
+      expect(users[0]).toHaveProperty("role");
+      expect(users[0].role).toBe(Roles.CUSTOMER);
     });
   });
 });
