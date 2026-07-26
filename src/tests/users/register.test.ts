@@ -4,6 +4,7 @@ import type { DataSource } from "typeorm";
 import { AppDataSource } from "../../config/data-source.ts";
 import { User } from "../../entities/User.ts";
 import { Roles } from "../../constants/index.ts";
+import { isJWTValid } from "../utils/index.ts";
 
 //technique below is AAA, Arrange, Act, Assert
 
@@ -133,6 +134,43 @@ describe("POST /auth/register", () => {
 
       expect(response.statusCode).toBe(400);
       expect(users).toHaveLength(1); // Ensure no new user was created
+    });
+    it("should return valid access and refresh token", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        password: "password123",
+        role: Roles.CUSTOMER,
+      };
+      let accessTokenCookie = null;
+      let refreshTokenCookie = null;
+
+      const response = await request(app).post("/auth/register").send(userData);
+
+      interface Headers {
+        [key: string]: string | string[] | undefined;
+        ["set-cookie"]: string[];
+      }
+
+      const headers = response.headers as Headers;
+
+      const cookies = headers["set-cookie"] || [];
+      cookies.forEach((cookie) => {
+        if (cookie.startsWith("accessToken=")) {
+          accessTokenCookie = cookie.split(";")[0]?.split("=")[1];
+        }
+        if (cookie.startsWith("refreshToken=")) {
+          refreshTokenCookie = cookie.split(";")[0]?.split("=")[1];
+        }
+      });
+
+      expect(accessTokenCookie).not.toBeNull();
+      expect(refreshTokenCookie).not.toBeNull();
+
+      expect(isJWTValid(accessTokenCookie)).toBe(true);
+      console.log(accessTokenCookie);
+      expect(isJWTValid(refreshTokenCookie)).toBe(true);
     });
   });
   describe("when the request body is invalid", () => {
