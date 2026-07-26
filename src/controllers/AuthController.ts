@@ -9,6 +9,8 @@ import { sign, type JwtPayload } from "jsonwebtoken";
 import path from "path/win32";
 import createHttpError from "http-errors";
 import { Config } from "../config/index.ts";
+import { AppDataSource } from "../config/data-source.ts";
+import { RefreshToken } from "../entities/RefreshToken.ts";
 
 export class AuthController {
   constructor(
@@ -52,6 +54,14 @@ export class AuthController {
         sub: userSavedData.id.toString(),
         role: userSavedData.role,
       };
+
+      const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
+      const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365;
+      const newRefreshToken = await refreshTokenRepo.save({
+        user: userSavedData,
+        expiresAt: new Date(Date.now() + MS_IN_YEAR),
+      });
+
       const accessToken = sign(payload, privateKey, {
         expiresIn: "1h",
         algorithm: "RS256",
@@ -61,6 +71,7 @@ export class AuthController {
         algorithm: "HS256",
         expiresIn: "1y",
         issuer: "auth-service",
+        jwtid: String(newRefreshToken.id),
       });
 
       res.cookie("accessToken", accessToken, {

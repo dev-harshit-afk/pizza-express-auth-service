@@ -5,6 +5,7 @@ import { AppDataSource } from "../../config/data-source.ts";
 import { User } from "../../entities/User.ts";
 import { Roles } from "../../constants/index.ts";
 import { isJWTValid } from "../utils/index.ts";
+import { RefreshToken } from "../../entities/RefreshToken.ts";
 
 //technique below is AAA, Arrange, Act, Assert
 
@@ -169,8 +170,27 @@ describe("POST /auth/register", () => {
       expect(refreshTokenCookie).not.toBeNull();
 
       expect(isJWTValid(accessTokenCookie)).toBe(true);
-      console.log(accessTokenCookie);
       expect(isJWTValid(refreshTokenCookie)).toBe(true);
+    });
+    it("should store the token in db", async () => {
+      const userData = {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        password: "password123",
+        role: Roles.CUSTOMER,
+      };
+
+      const response = await request(app).post("/auth/register").send(userData);
+      const refreshTokenRepository = connection.getRepository(RefreshToken);
+      const refreshTokens = await refreshTokenRepository.find();
+      expect(refreshTokens).toHaveLength(1);
+      const tokens = await refreshTokenRepository
+        .createQueryBuilder("refreshToken")
+        .where("refreshToken.userId=:userId", { userId: response.body.data.id })
+        .getMany();
+
+      expect(tokens).toHaveLength(1);
     });
   });
   describe("when the request body is invalid", () => {
