@@ -5,7 +5,7 @@ import type { RegisterUserRequest } from "../types/index.ts";
 import { UserService } from "../services/UserService.ts";
 import type { Logger } from "winston";
 import { validationResult } from "express-validator";
-import { sign, type JwtPayload } from "jsonwebtoken";
+import jwt, { type JwtPayload } from "jsonwebtoken";
 import path from "path/win32";
 import createHttpError from "http-errors";
 import { Config } from "../config/index.ts";
@@ -42,7 +42,8 @@ export class AuthController {
       let privateKey: Buffer | string;
       try {
         privateKey = fs.readFileSync(
-          path.join(__dirname, "../../certs/private.pem"),
+          path.resolve(process.cwd(), "certs", "private.pem"),
+          "utf8",
         );
       } catch (error) {
         const err = createHttpError(500, "Error while reading private key");
@@ -62,12 +63,12 @@ export class AuthController {
         expiresAt: new Date(Date.now() + MS_IN_YEAR),
       });
 
-      const accessToken = sign(payload, privateKey, {
+      const accessToken = jwt.sign(payload, privateKey, {
         expiresIn: "1h",
         algorithm: "RS256",
         issuer: "auth-service",
       });
-      const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
+      const refreshToken = jwt.sign(payload, Config.REFRESH_TOKEN_SECRET!, {
         algorithm: "HS256",
         expiresIn: "1y",
         issuer: "auth-service",

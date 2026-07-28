@@ -11,17 +11,17 @@ import { User } from "./User.ts";
 @Entity()
 export class RefreshToken {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: "timestamp" })
-  expiresAt: Date;
+  expiresAt!: Date;
 
   @ManyToOne(() => User)
-  user: User;
+  user!: User;
 
   @UpdateDateColumn()
-  updatedAt: number;
+  updatedAt!: number;
 
   @CreateDateColumn()
-  createdAt: number;
+  createdAt!: number;
 }

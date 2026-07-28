@@ -1,4 +1,8 @@
-import express from "express";
+import express, {
+  type NextFunction,
+  type Request,
+  type Response,
+} from "express";
 import { AuthController } from "../controllers/AuthController.ts";
 import { UserService } from "../services/UserService.ts";
 import { User } from "../entities/User.ts";
@@ -12,8 +16,11 @@ const userRepository = AppDataSource.getRepository(User);
 const userService = new UserService(userRepository);
 const authController = new AuthController(userService, logger);
 
-router.post("/register", registerValidator, (req, res, next) =>
-  authController.register(req, res, next),
+router.post(
+  "/register",
+  registerValidator,
+  (req: Request, res: Response, next: NextFunction) =>
+    authController.register(req, res, next),
 );
 
 export default router;

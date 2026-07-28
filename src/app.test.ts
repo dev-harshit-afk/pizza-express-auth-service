@@ -1,5 +1,5 @@
 import request from "supertest";
-import app from "./src/app.ts";
+import app from "./app.ts";
 
 describe.skip("APP", () => {
   it("runs a sample test successfully", () => {

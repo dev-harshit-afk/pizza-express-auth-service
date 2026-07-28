@@ -1,5 +1,6 @@
-import { AppDataSource } from "./data-source";
-import { User } from "./entities/User";
+import type { HttpError } from "http-errors";
+import { AppDataSource } from "./config/data-source.ts";
+import { User } from "./entities/User.ts";
 
 AppDataSource.initialize()
   .then(async () => {
@@ -7,7 +8,7 @@ AppDataSource.initialize()
     const user = new User();
     user.firstName = "Timber";
     user.lastName = "Saw";
-    user.age = 25;
+
     await AppDataSource.manager.save(user);
     console.log("Saved a new user with id: " + user.id);
 
@@ -19,4 +20,4 @@ AppDataSource.initialize()
       "Here you can setup and run express / fastify / any other framework.",
     );
   })
-  .catch((error) => console.log(error));
+  .catch((error: HttpError) => console.log(error));
