@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import fs from "fs";
 import type { Response, NextFunction } from "express";
-import type { RegisterUserRequest } from "../types/index.ts";
-import { UserService } from "../services/UserService.ts";
+import type { RegisterUserRequest } from "../types/index";
+import { UserService } from "../services/UserService";
 import type { Logger } from "winston";
 import { validationResult } from "express-validator";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import path from "path/win32";
 import createHttpError from "http-errors";
-import { Config } from "../config/index.ts";
-import { AppDataSource } from "../config/data-source.ts";
-import { RefreshToken } from "../entities/RefreshToken.ts";
-import type { CredentialService } from "../services/CredentialService.ts";
-import type { TokenService } from "../services/TokenService.ts";
+import { Config } from "../config/index";
+import { AppDataSource } from "../config/data-source";
+import { RefreshToken } from "../entities/RefreshToken";
+import type { CredentialService } from "../services/CredentialService";
+import type { TokenService } from "../services/TokenService";
 
 export class AuthController {
   constructor(
@@ -153,5 +153,9 @@ export class AuthController {
       next(error);
       return;
     }
+  }
+
+  async self(req: RegisterUserRequest, res: Response, next: NextFunction) {
+    res.json({});
   }
 }

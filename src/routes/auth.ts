@@ -3,16 +3,16 @@ import express, {
   type Request,
   type Response,
 } from "express";
-import { AuthController } from "../controllers/AuthController.ts";
-import { UserService } from "../services/UserService.ts";
-import { User } from "../entities/User.ts";
-import { AppDataSource } from "../config/data-source.ts";
-import logger from "../config/logger.ts";
-import registerValidator from "../validator.ts/register-validator.ts";
-import loginValidator from "../validator.ts/login-validator.ts";
-import { CredentialService } from "../services/CredentialService.ts";
-import { TokenService } from "../services/TokenService.ts";
-import { RefreshToken } from "../entities/RefreshToken.ts";
+import { AuthController } from "../controllers/AuthController";
+import { UserService } from "../services/UserService";
+import { User } from "../entities/User";
+import { AppDataSource } from "../config/data-source";
+import logger from "../config/logger";
+import registerValidator from "../validator.ts/register-validator";
+import loginValidator from "../validator.ts/login-validator";
+import { CredentialService } from "../services/CredentialService";
+import { TokenService } from "../services/TokenService";
+import { RefreshToken } from "../entities/RefreshToken";
 
 const router = express.Router();
 
@@ -39,6 +39,9 @@ router.post(
   loginValidator,
   (req: Request, res: Response, next: NextFunction) =>
     authController.login(req, res, next),
+);
+router.get("/self", (req: Request, res: Response, next: NextFunction) =>
+  authController.self(req, res, next),
 );
 
 export default router;

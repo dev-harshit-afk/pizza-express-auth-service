@@ -1,7 +1,7 @@
-import app from "./app.ts";
-import { AppDataSource } from "./config/data-source.ts";
-import { Config } from "./config/index.ts";
-import logger from "./config/logger.ts";
+import app from "./app";
+import { AppDataSource } from "./config/data-source";
+import { Config } from "./config/index";
+import logger from "./config/logger";
 
 const startServer = () => {
   const PORT = Config.PORT;

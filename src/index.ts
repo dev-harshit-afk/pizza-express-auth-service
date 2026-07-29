@@ -1,6 +1,6 @@
 import type { HttpError } from "http-errors";
-import { AppDataSource } from "./config/data-source.ts";
-import { User } from "./entities/User.ts";
+import { AppDataSource } from "./config/data-source";
+import { User } from "./entities/User";
 
 AppDataSource.initialize()
   .then(async () => {

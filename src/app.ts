@@ -5,8 +5,8 @@ import express, {
   type Response,
 } from "express";
 import type { HttpError } from "http-errors";
-import logger from "./config/logger.ts";
-import authRoutes from "./routes/auth.ts";
+import logger from "./config/logger";
+import authRoutes from "./routes/auth";
 
 const app = express();
 

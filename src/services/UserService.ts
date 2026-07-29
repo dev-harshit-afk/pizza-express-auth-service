@@ -1,8 +1,8 @@
 import type { Repository } from "typeorm";
-import { User } from "../entities/User.ts";
-import type { UserData } from "../types/index.ts";
+import { User } from "../entities/User";
+import type { UserData } from "../types/index";
 import createHttpError from "http-errors";
-import { Roles } from "../constants/index.ts";
+import { Roles } from "../constants/index";
 import bcrypt from "bcrypt";
 
 export class UserService {

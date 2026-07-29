@@ -4,14 +4,15 @@
     // File Layout
     "rootDir": "./src",
     "outDir": "./dist",
-    "allowImportingTsExtensions":true,
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "target": "esnext",
+    "module": "commonjs",
+    "target": "ES2020",
     "types": ["jest", "node"],
     "esModuleInterop": true,
+        "moduleResolution": "node",
+
     "allowSyntheticDefaultImports": true,
     // For nodejs:
     "lib": ["ES6"],
@@ -24,7 +25,6 @@
     "declarationMap": true,
 
     // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
 
     // Style Options
@@ -38,10 +38,8 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
     "skipLibCheck": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true

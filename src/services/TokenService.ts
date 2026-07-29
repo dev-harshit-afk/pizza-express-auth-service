@@ -1,9 +1,9 @@
 import fs from "fs";
 import path from "path/win32";
 import type { Repository } from "typeorm";
-import { RefreshToken } from "../entities/RefreshToken.ts";
-import type { User } from "../entities/User.ts";
-import { Config } from "../config/index.ts";
+import { RefreshToken } from "../entities/RefreshToken";
+import type { User } from "../entities/User";
+import { Config } from "../config/index";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import createHttpError from "http-errors";
 
