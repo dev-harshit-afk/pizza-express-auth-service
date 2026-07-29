@@ -11,11 +11,15 @@ import createHttpError from "http-errors";
 import { Config } from "../config/index.ts";
 import { AppDataSource } from "../config/data-source.ts";
 import { RefreshToken } from "../entities/RefreshToken.ts";
+import type { CredentialService } from "../services/CredentialService.ts";
+import type { TokenService } from "../services/TokenService.ts";
 
 export class AuthController {
   constructor(
     private userService: UserService,
     private logger: Logger,
+    private credentialService: CredentialService,
+    private tokenService: TokenService,
   ) {}
   async register(req: RegisterUserRequest, res: Response, next: NextFunction) {
     try {
@@ -39,40 +43,19 @@ export class AuthController {
         email,
         password,
       });
-      let privateKey: Buffer | string;
-      try {
-        privateKey = fs.readFileSync(
-          path.resolve(process.cwd(), "certs", "private.pem"),
-          "utf8",
-        );
-      } catch (error) {
-        const err = createHttpError(500, "Error while reading private key");
-        next(err);
-        return;
-      }
 
       const payload: JwtPayload = {
         sub: userSavedData.id.toString(),
         role: userSavedData.role,
       };
 
-      const refreshTokenRepo = AppDataSource.getRepository(RefreshToken);
-      const MS_IN_YEAR = 1000 * 60 * 60 * 24 * 365;
-      const newRefreshToken = await refreshTokenRepo.save({
-        user: userSavedData,
-        expiresAt: new Date(Date.now() + MS_IN_YEAR),
-      });
+      const newRefreshToken =
+        await this.tokenService.persistRefreshToken(userSavedData);
 
-      const accessToken = jwt.sign(payload, privateKey, {
-        expiresIn: "1h",
-        algorithm: "RS256",
-        issuer: "auth-service",
-      });
-      const refreshToken = jwt.sign(payload, Config.REFRESH_TOKEN_SECRET!, {
-        algorithm: "HS256",
-        expiresIn: "1y",
-        issuer: "auth-service",
-        jwtid: String(newRefreshToken.id),
+      const accessToken = this.tokenService.generateAccessToken({ payload });
+      const refreshToken = this.tokenService.generateRefreshToken({
+        payload,
+        id: String(newRefreshToken.id),
       });
 
       res.cookie("accessToken", accessToken, {
@@ -90,11 +73,82 @@ export class AuthController {
 
       this.logger.info("User has been registered", { id: userSavedData.id });
 
-      res.status(200).json({
+      res.status(201).json({
         message: "User registered successfully",
         id: 10,
         data: userSavedData,
       });
+    } catch (error) {
+      next(error);
+      return;
+    }
+  }
+  async login(req: RegisterUserRequest, res: Response, next: NextFunction) {
+    try {
+      const errResult = validationResult(req);
+
+      if (!errResult.isEmpty()) {
+        return res.status(400).json({ errors: errResult.array() });
+      }
+
+      const { email, password } = req.body;
+      this.logger.debug("New request to login a user", {
+        email,
+        password: "******",
+      });
+
+      const user = await this.userService.findUserByEmail(email);
+      if (!user) {
+        const err = createHttpError(400, "invalid email or password");
+        next(err);
+        return;
+      }
+
+      const isPasswordVerfied = await this.credentialService.comparePassword(
+        password,
+        user.password,
+      );
+
+      if (!isPasswordVerfied) {
+        const err = createHttpError(400, "invalid email or password");
+        next(err);
+        return;
+      }
+
+      const payload: JwtPayload = {
+        sub: user.id.toString(),
+        role: user.role,
+      };
+      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+
+      const refreshToken = this.tokenService.generateRefreshToken({
+        payload,
+        id: String(newRefreshToken.id),
+      });
+
+      const accessToken = this.tokenService.generateAccessToken({ payload });
+
+      res.cookie("accessToken", accessToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60,
+        httpOnly: true,
+      });
+      res.cookie("refreshToken", refreshToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+        httpOnly: true,
+      });
+
+      this.logger.info("User has been logged in", { id: user.id });
+
+      res.status(200).json({
+        message: "User logged in successfully",
+        id: user.id,
+      });
+
+      return;
     } catch (error) {
       next(error);
       return;

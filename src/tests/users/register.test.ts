@@ -26,7 +26,7 @@ describe("POST /auth/register", () => {
     await connection.destroy();
   });
   describe("when the request body is valid", () => {
-    it("should send 200 code", async () => {
+    it("should send 201 code", async () => {
       // Arrange
       const user = {
         firstName: "John",
@@ -37,7 +37,7 @@ describe("POST /auth/register", () => {
       // Act
       const response = await request(app).post("/auth/register").send(user);
       // Assert
-      expect(response.statusCode).toBe(200);
+      expect(response.statusCode).toBe(201);
     });
 
     it("should return json format", async () => {

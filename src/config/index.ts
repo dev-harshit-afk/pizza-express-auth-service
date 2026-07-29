@@ -1,6 +1,9 @@
 import { config } from "dotenv";
 import path from "path";
-config({ path: path.join(__dirname, `../../.env.${process.env.NODE_ENV}`) });
+config({
+  path: path.resolve(process.cwd(), `.env.${process.env.NODE_ENV ?? "test"}`),
+});
+
 const {
   PORT,
   NODE_ENV,
