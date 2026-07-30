@@ -1,16 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import fs from "fs";
+ 
 import type { Response, NextFunction } from "express";
-import type { RegisterUserRequest } from "../types/index";
+import type { RegisterUserRequest, RequestAuth } from "../types/index";
 import { UserService } from "../services/UserService";
 import type { Logger } from "winston";
 import { validationResult } from "express-validator";
-import jwt, { type JwtPayload } from "jsonwebtoken";
-import path from "path/win32";
 import createHttpError from "http-errors";
-import { Config } from "../config/index";
-import { AppDataSource } from "../config/data-source";
-import { RefreshToken } from "../entities/RefreshToken";
 import type { CredentialService } from "../services/CredentialService";
 import type { TokenService } from "../services/TokenService";
 
@@ -155,7 +149,14 @@ export class AuthController {
     }
   }
 
-  async self(req: RegisterUserRequest, res: Response, next: NextFunction) {
-    res.json({});
+  async self(req: RequestAuth, res: Response, next: NextFunction) {
+    const user = await this.userService.findUserById(Number(req.auth.sub));
+    if (!user) {
+      const err = createHttpError(400, "No user found");
+      next(err);
+      return;
+    }
+
+    res.json({ ...user, password: undefined });
   }
 }

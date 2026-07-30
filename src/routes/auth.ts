@@ -13,6 +13,8 @@ import loginValidator from "../validator.ts/login-validator";
 import { CredentialService } from "../services/CredentialService";
 import { TokenService } from "../services/TokenService";
 import { RefreshToken } from "../entities/RefreshToken";
+import authenticate from "../middlewares/authenticate";
+import { RequestAuth } from "../types";
 
 const router = express.Router();
 
@@ -40,8 +42,11 @@ router.post(
   (req: Request, res: Response, next: NextFunction) =>
     authController.login(req, res, next),
 );
-router.get("/self", (req: Request, res: Response, next: NextFunction) =>
-  authController.self(req, res, next),
+router.get(
+  "/self",
+  authenticate,
+  (req: Request, res: Response, next: NextFunction) =>
+    authController.self(req as RequestAuth, res, next),
 );
 
 export default router;
