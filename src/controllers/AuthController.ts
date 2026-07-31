@@ -1,4 +1,3 @@
- 
 import type { Response, NextFunction } from "express";
 import type { RegisterUserRequest, RequestAuth } from "../types/index";
 import { UserService } from "../services/UserService";
@@ -7,6 +6,7 @@ import { validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import type { CredentialService } from "../services/CredentialService";
 import type { TokenService } from "../services/TokenService";
+import { JwtPayload } from "jsonwebtoken";
 
 export class AuthController {
   constructor(

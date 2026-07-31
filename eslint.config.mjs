@@ -10,7 +10,7 @@ export default tseslint.config(
       "node_modules",
       "eslint.config.mjs",
       "jest.config.cjs",
-      "scripts/generateKeys.mjs",
+      "scripts/*",
     ],
   },
   {
