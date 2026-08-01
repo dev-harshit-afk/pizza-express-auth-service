@@ -18,16 +18,16 @@ export class TokenService {
     });
   }
 
-  generateRefreshToken({ payload, id }: { payload: JwtPayload; id: string }) {
+  generateRefreshToken(payload: JwtPayload) {
     return jwt.sign(payload, Config.REFRESH_TOKEN_SECRET!, {
       algorithm: "HS256",
       expiresIn: "1y",
       issuer: "auth-service",
-      jwtid: id,
+      jwtid: String(payload.id),
     });
   }
 
-  generateAccessToken({ payload }: { payload: JwtPayload }) {
+  generateAccessToken(payload: JwtPayload) {
     let privateKey: Buffer | string;
     try {
       privateKey = fs.readFileSync(
@@ -45,5 +45,8 @@ export class TokenService {
       algorithm: "RS256",
       issuer: "auth-service",
     });
+  }
+  async deleteRefreshToken(tokenId: number) {
+    await this.refreshTokenRepo.delete({ id: tokenId });
   }
 }

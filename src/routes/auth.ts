@@ -15,6 +15,7 @@ import { TokenService } from "../services/TokenService";
 import { RefreshToken } from "../entities/RefreshToken";
 import authenticate from "../middlewares/authenticate";
 import { RequestAuth } from "../types";
+import validateRefreshToken from "../middlewares/validateRefreshToken";
 
 const router = express.Router();
 
@@ -47,6 +48,13 @@ router.get(
   authenticate,
   (req: Request, res: Response, next: NextFunction) =>
     authController.self(req as RequestAuth, res, next),
+);
+
+router.post(
+  "/refresh",
+  validateRefreshToken,
+  (req: Request, res: Response, next: NextFunction) =>
+    authController.Refresh(req as RequestAuth, res, next),
 );
 
 export default router;

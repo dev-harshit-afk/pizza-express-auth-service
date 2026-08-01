@@ -46,9 +46,9 @@ export class AuthController {
       const newRefreshToken =
         await this.tokenService.persistRefreshToken(userSavedData);
 
-      const accessToken = this.tokenService.generateAccessToken({ payload });
+      const accessToken = this.tokenService.generateAccessToken(payload);
       const refreshToken = this.tokenService.generateRefreshToken({
-        payload,
+        ...payload,
         id: String(newRefreshToken.id),
       });
 
@@ -116,11 +116,11 @@ export class AuthController {
       const newRefreshToken = await this.tokenService.persistRefreshToken(user);
 
       const refreshToken = this.tokenService.generateRefreshToken({
-        payload,
+        ...payload,
         id: String(newRefreshToken.id),
       });
 
-      const accessToken = this.tokenService.generateAccessToken({ payload });
+      const accessToken = this.tokenService.generateAccessToken(payload);
 
       res.cookie("accessToken", accessToken, {
         domain: "localhost",
@@ -158,5 +158,49 @@ export class AuthController {
     }
 
     res.json({ ...user, password: undefined });
+  }
+
+  async Refresh(req: RequestAuth, res: Response, next: NextFunction) {
+    try {
+      const payload: JwtPayload = {
+        sub: req.auth.sub.toString(),
+        role: req.auth.role,
+      };
+      const user = await this.userService.findUserById(Number(req.auth.sub));
+      if (!user) {
+        const err = createHttpError(400, "User with that token not found");
+        next(err);
+        return;
+      }
+      const newRefreshToken = await this.tokenService.persistRefreshToken(user);
+
+      await this.tokenService.deleteRefreshToken(Number(req.auth.id));
+
+      const refreshToken = this.tokenService.generateRefreshToken({
+        ...payload,
+        id: String(newRefreshToken.id),
+      });
+
+      const accessToken = this.tokenService.generateAccessToken(payload);
+
+      res.cookie("accessToken", accessToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60,
+        httpOnly: true,
+      });
+      res.cookie("refreshToken", refreshToken, {
+        domain: "localhost",
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+        httpOnly: true,
+      });
+
+      this.logger.info("User has refreshed tokens ", { id: user.id });
+
+      res.json({ id: user.id });
+    } catch (error) {
+      next(error);
+    }
   }
 }
