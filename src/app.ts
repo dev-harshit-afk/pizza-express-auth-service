@@ -8,6 +8,7 @@ import type { HttpError } from "http-errors";
 import logger from "./config/logger";
 import authRoutes from "./routes/auth";
 import cookieParser from "cookie-parser";
+import tenantRoutes from "./routes/tenant";
 
 const app = express();
 app.use(express.static("public", { dotfiles: "allow" }));
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRoutes);
+app.use("/tenants", tenantRoutes);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {

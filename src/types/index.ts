@@ -23,3 +23,8 @@ export type AuthCookie = {
   accessToken: string;
   refreshToken: string;
 };
+
+export type ITenant = {
+  name: string;
+  address: string;
+};
