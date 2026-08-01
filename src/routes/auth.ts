@@ -16,6 +16,7 @@ import { RefreshToken } from "../entities/RefreshToken";
 import authenticate from "../middlewares/authenticate";
 import { RequestAuth } from "../types";
 import validateRefreshToken from "../middlewares/validateRefreshToken";
+import parseRefreshToken from "../middlewares/parseRefreshToken";
 
 const router = express.Router();
 
@@ -57,4 +58,11 @@ router.post(
     authController.Refresh(req as RequestAuth, res, next),
 );
 
+router.post(
+  "/logout",
+  authenticate,
+  parseRefreshToken,
+  (req: Request, res: Response, next: NextFunction) =>
+    authController.logout(req as RequestAuth, res, next),
+);
 export default router;
