@@ -5,6 +5,7 @@ import { AppDataSource } from "../../config/data-source";
 import createJWKSMock from "mock-jwks";
 import { Roles } from "../../constants";
 import { User } from "../../entities/User";
+import { createTenant } from "../utils";
 
 //technique below is AAA, Arrange, Act, Assert
 
@@ -33,11 +34,7 @@ describe("POST /users", () => {
   });
   describe("Given all fields", () => {
     it("should persist user data in database", async () => {
-      const tenantRepository = connection.getRepository("Tenant");
-      const tenant = await tenantRepository.save({
-        name: "Tenant 1",
-        address: "Address 1",
-      });
+      const tenant = await createTenant(connection.getRepository("Tenant"));
       const userData = {
         firstName: "John",
         lastName: "Doe",
@@ -62,11 +59,8 @@ describe("POST /users", () => {
       expect(users[0].email).toBe(userData.email);
     });
     it("should create manager user ", async () => {
-      const tenantRepository = connection.getRepository("Tenant");
-      const tenant = await tenantRepository.save({
-        name: "Tenant 1",
-        address: "Address 1",
-      });
+      const tenant = await createTenant(connection.getRepository("Tenant"));
+
       const userData = {
         firstName: "John",
         lastName: "Doe",
