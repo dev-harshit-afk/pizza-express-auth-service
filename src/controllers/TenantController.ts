@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { TenantService } from "../services/TenantService";
 import { Logger } from "winston";
 import createHttpError from "http-errors";
+import { validationResult } from "express-validator";
 
 export class TenantController {
   constructor(
@@ -11,6 +12,10 @@ export class TenantController {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
+      const result = validationResult(req);
+      if (!result.isEmpty()) {
+        return res.status(400).json({ errors: result.array() });
+      }
       const { name, address } = req.body;
 
       const tenant = await this.tenantService.create({ name, address });
@@ -23,6 +28,10 @@ export class TenantController {
 
   async update(req: Request, res: Response, next: NextFunction) {
     try {
+      const result = validationResult(req);
+      if (!result.isEmpty()) {
+        return res.status(400).json({ errors: result.array() });
+      }
       const { name, address } = req.body;
       const tenantId = req.params.id;
       if (isNaN(Number(tenantId))) {

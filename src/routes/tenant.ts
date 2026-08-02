@@ -7,19 +7,26 @@ import logger from "../config/logger";
 import authenticate from "../middlewares/authenticate";
 import canAccess from "../middlewares/canAccess";
 import { Roles } from "../constants";
+import tenantValidator from "../validator.ts/tenant-validator";
 const tenantRepository = AppDataSource.getRepository(Tenant);
 const tenantService = new TenantService(tenantRepository);
 const tenantController = new TenantController(tenantService, logger);
 const router = express.Router();
 
-router.post("/", authenticate, canAccess([Roles.ADMIN]), (req, res, next) =>
-  tenantController.create(req, res, next),
+router.post(
+  "/",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  tenantValidator,
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.create(req, res, next),
 );
 
 router.patch(
   "/:id",
   authenticate,
   canAccess([Roles.ADMIN]),
+  tenantValidator,
   (req: Request, res: Response, next: NextFunction) =>
     tenantController.update(req, res, next),
 );
