@@ -2,12 +2,11 @@ import type { Repository } from "typeorm";
 import { User } from "../entities/User";
 import type { UserData } from "../types/index";
 import createHttpError from "http-errors";
-import { Roles } from "../constants/index";
 import bcrypt from "bcrypt";
 
 export class UserService {
   constructor(private userRepository: Repository<User>) {}
-  async create({ firstName, lastName, email, password }: UserData) {
+  async create({ firstName, lastName, email, password, role }: UserData) {
     const user = await this.userRepository.findOne({ where: { email } });
     if (user) {
       const error = createHttpError(400, "User email already exists");
@@ -22,7 +21,7 @@ export class UserService {
         lastName,
         email,
         password: hashedPassword,
-        role: Roles.CUSTOMER,
+        role,
       });
 
       return userData;

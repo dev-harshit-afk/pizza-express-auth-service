@@ -9,6 +9,7 @@ import logger from "./config/logger";
 import authRoutes from "./routes/auth";
 import cookieParser from "cookie-parser";
 import tenantRoutes from "./routes/tenant";
+import userRoutes from "./routes/user";
 
 const app = express();
 app.use(express.static("public", { dotfiles: "allow" }));
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRoutes);
 app.use("/tenants", tenantRoutes);
+app.use("/users", userRoutes);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: HttpError, req: Request, res: Response, next: NextFunction) => {
