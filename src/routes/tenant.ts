@@ -30,12 +30,8 @@ router.patch(
   (req: Request, res: Response, next: NextFunction) =>
     tenantController.update(req, res, next),
 );
-router.get(
-  "/",
-  authenticate,
-  canAccess([Roles.ADMIN]),
-  (req: Request, res: Response, next: NextFunction) =>
-    tenantController.getAll(req, res, next),
+router.get("/", (req: Request, res: Response, next: NextFunction) =>
+  tenantController.getAll(req, res, next),
 );
 router.get(
   "/:id",
