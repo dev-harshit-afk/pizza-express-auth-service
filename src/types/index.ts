@@ -29,3 +29,15 @@ export type ITenant = {
   name: string;
   address: string;
 };
+export interface CreateUserRequest extends Request {
+  body: UserData;
+}
+export interface LimitedUserData {
+  firstName: string;
+  lastName: string;
+  role: string;
+}
+
+export interface UpdateUserRequest extends Request {
+  body: LimitedUserData;
+}

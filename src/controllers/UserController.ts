@@ -3,6 +3,7 @@ import { UserService } from "../services/UserService";
 import { Roles } from "../constants";
 import createHttpError from "http-errors";
 import { Logger } from "winston";
+import { validationResult } from "express-validator";
 
 export class UserController {
   constructor(
@@ -11,6 +12,11 @@ export class UserController {
   ) {}
   async create(req: Request, res: Response, next: NextFunction) {
     try {
+      const result = validationResult(req);
+      if (!result.isEmpty()) {
+        return res.status(400).json({ errors: result.array() });
+      }
+
       const { firstName, lastName, email, password } = req.body;
 
       const user = await this.userService.create({
@@ -31,6 +37,10 @@ export class UserController {
   }
   async update(req: Request, res: Response, next: NextFunction) {
     try {
+      const result = validationResult(req);
+      if (!result.isEmpty()) {
+        return res.status(400).json({ errors: result.array() });
+      }
       const userId = req.params.id;
       const { firstName, lastName, role } = req.body;
 
