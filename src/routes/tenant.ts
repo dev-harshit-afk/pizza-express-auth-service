@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { TenantController } from "../controllers/TenantController";
 import { TenantService } from "../services/TenantService";
 import { AppDataSource } from "../config/data-source";
@@ -14,6 +14,36 @@ const router = express.Router();
 
 router.post("/", authenticate, canAccess([Roles.ADMIN]), (req, res, next) =>
   tenantController.create(req, res, next),
+);
+
+router.patch(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.update(req, res, next),
+);
+router.get(
+  "/",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.getAll(req, res, next),
+);
+router.get(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.getOne(req, res, next),
+);
+
+router.delete(
+  "/:id",
+  authenticate,
+  canAccess([Roles.ADMIN]),
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.destroy(req, res, next),
 );
 
 export default router;
