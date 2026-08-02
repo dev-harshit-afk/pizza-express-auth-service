@@ -1,4 +1,4 @@
-import type { Repository } from "typeorm";
+import type { Repository, DeepPartial } from "typeorm";
 import { User } from "../entities/User";
 import type { UserData } from "../types/index";
 import createHttpError from "http-errors";
@@ -6,7 +6,14 @@ import bcrypt from "bcrypt";
 
 export class UserService {
   constructor(private userRepository: Repository<User>) {}
-  async create({ firstName, lastName, email, password, role }: UserData) {
+  async create({
+    firstName,
+    lastName,
+    email,
+    password,
+    role,
+    tenantId,
+  }: UserData) {
     const user = await this.userRepository.findOne({ where: { email } });
     if (user) {
       const error = createHttpError(400, "User email already exists");
@@ -16,13 +23,19 @@ export class UserService {
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-      const userData = await this.userRepository.save({
+      const userPayload: DeepPartial<User> = {
         firstName,
         lastName,
         email,
         password: hashedPassword,
         role,
-      });
+      };
+
+      if (tenantId) {
+        userPayload.tenant = { id: tenantId };
+      }
+
+      const userData = await this.userRepository.save(userPayload);
 
       return userData;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
