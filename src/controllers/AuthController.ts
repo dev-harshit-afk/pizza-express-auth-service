@@ -93,7 +93,7 @@ export class AuthController {
         password: "******",
       });
 
-      const user = await this.userService.findUserByEmail(email);
+      const user = await this.userService.findUserByEmailwithPassword(email);
       if (!user) {
         const err = createHttpError(400, "invalid email or password");
         next(err);
