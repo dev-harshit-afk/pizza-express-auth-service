@@ -28,7 +28,25 @@ export class TokenService {
   }
 
   generateAccessToken(payload: JwtPayload) {
-    let privateKey: Buffer | string;
+    let privateKey: string;
+
+    if (!Config.PRIVATE_KEY) {
+      const err = createHttpError(
+        500,
+        "Private key is not defined in environment variables",
+      );
+      throw err;
+    }
+    try {
+      privateKey = Config.PRIVATE_KEY!;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      const err = createHttpError(
+        500,
+        "Error while reading private key from environment variables",
+      );
+      throw err;
+    }
     try {
       privateKey = fs.readFileSync(
         path.resolve(process.cwd(), "certs", "private.pem"),

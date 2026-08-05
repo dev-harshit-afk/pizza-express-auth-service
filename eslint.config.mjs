@@ -13,6 +13,7 @@ export default tseslint.config(
       "scripts/*",
       "**/*.test.ts",
       "src/tests/*",
+      "coverage/*",
     ],
   },
   {
