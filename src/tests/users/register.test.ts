@@ -37,7 +37,6 @@ describe("POST /auth/register", () => {
       // Act
       const response = await request(app).post("/auth/register").send(user);
 
-      console.log("Response body:", response.body); // Log the response body for debugging
       // Assert
       expect(response.statusCode).toBe(201);
     });
