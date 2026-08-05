@@ -44,5 +44,5 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
   },
-  "exclude": ["**/*.test.ts","tests"]
+  "exclude": ["**/*.test.ts","tests","dist","node_modules","coverage"],
 }
