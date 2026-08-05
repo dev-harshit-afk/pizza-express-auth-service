@@ -1,5 +1,3 @@
-import fs from "fs";
-import path from "path/win32";
 import type { Repository } from "typeorm";
 import { RefreshToken } from "../entities/RefreshToken";
 import type { User } from "../entities/User";
@@ -45,16 +43,6 @@ export class TokenService {
         500,
         "Error while reading private key from environment variables",
       );
-      throw err;
-    }
-    try {
-      privateKey = fs.readFileSync(
-        path.resolve(process.cwd(), "certs", "private.pem"),
-        "utf8",
-      );
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      const err = createHttpError(500, "Error while reading private key");
       throw err;
     }
 
