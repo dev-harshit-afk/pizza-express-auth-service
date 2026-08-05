@@ -1,7 +1,7 @@
 import type { DataSource } from "typeorm";
 import request from "supertest";
-import { AppDataSource } from "../../config/data-source";
-import app from "../../app";
+import { AppDataSource } from "../../src/config/data-source";
+import app from "../../src/app";
 import { isJWTValid } from "../utils/index";
 describe("POST /auth/login", () => {
   let connection: DataSource;

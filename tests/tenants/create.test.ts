@@ -1,10 +1,10 @@
 import type { DataSource } from "typeorm";
 import request from "supertest";
-import { AppDataSource } from "../../config/data-source";
-import { Roles } from "../../constants/index";
-import app from "../../app";
+import { AppDataSource } from "../../src/config/data-source";
+import { Roles } from "../../src/constants/index";
+import app from "../../src/app";
 import createJWKSMock from "mock-jwks";
-import { Tenant } from "../../entities/Tenant";
+import { Tenant } from "../../src/entities/Tenant";
 describe("POST /tenants", () => {
   let connection: DataSource;
   let jwks: ReturnType<typeof createJWKSMock>;

@@ -1,5 +1,6 @@
+// @ts-nocheck
 import type { DataSource, Repository } from "typeorm";
-import { Tenant } from "../../entities/Tenant";
+import { Tenant } from "../../src/entities/Tenant";
 
 export const truncateTable = async (connection: DataSource) => {
   const entities = connection.entityMetadatas;

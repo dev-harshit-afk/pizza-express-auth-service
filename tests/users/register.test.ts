@@ -1,11 +1,11 @@
 import request from "supertest";
-import app from "../../app";
+import app from "../../src/app";
 import type { DataSource } from "typeorm";
-import { AppDataSource } from "../../config/data-source";
-import { User } from "../../entities/User";
-import { Roles } from "../../constants/index";
+import { AppDataSource } from "../../src/config/data-source";
+import { User } from "../../src/entities/User";
+import { Roles } from "../../src/constants/index";
 import { isJWTValid } from "../utils/index";
-import { RefreshToken } from "../../entities/RefreshToken";
+import { RefreshToken } from "../../src/entities/RefreshToken";
 
 //technique below is AAA, Arrange, Act, Assert
 

@@ -12,7 +12,7 @@ export default tseslint.config(
       "jest.config.cjs",
       "scripts/*",
       "**/*.test.ts",
-      "src/tests/*",
+      "tests/*",
       "coverage/*",
     ],
   },

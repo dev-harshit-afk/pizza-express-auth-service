@@ -1,10 +1,10 @@
 import request from "supertest";
-import app from "../../app";
+import app from "../../src/app";
 import type { DataSource } from "typeorm";
-import { AppDataSource } from "../../config/data-source";
+import { AppDataSource } from "../../src/config/data-source";
 import createJWKSMock from "mock-jwks";
-import { Roles } from "../../constants";
-import { User } from "../../entities/User";
+import { Roles } from "../../src/constants";
+import { User } from "../../src/entities/User";
 import { createTenant } from "../utils";
 
 //technique below is AAA, Arrange, Act, Assert
