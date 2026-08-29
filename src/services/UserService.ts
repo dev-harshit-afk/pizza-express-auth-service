@@ -1,6 +1,6 @@
 import type { Repository, DeepPartial } from "typeorm";
 import { User } from "../entities/User";
-import type { UserData } from "../types/index";
+import type { UserData, UserQueryParams } from "../types/index";
 import createHttpError from "http-errors";
 import bcrypt from "bcrypt";
 
@@ -60,7 +60,10 @@ export class UserService {
   }
 
   async findUserById(id: number) {
-    return await this.userRepository.findOne({ where: { id } });
+    return await this.userRepository.findOne({
+      where: { id },
+      relations: { tenant: true },
+    });
   }
 
   async update(
@@ -81,8 +84,14 @@ export class UserService {
       throw error;
     }
   }
-  async getAll() {
-    return await this.userRepository.find();
+  async getAll(validateQuery: UserQueryParams) {
+    const queryBuilder = this.userRepository.createQueryBuilder();
+
+    const result = await queryBuilder
+      .skip((validateQuery.currentPage - 1) * validateQuery.perPage)
+      .take(validateQuery.perPage)
+      .getManyAndCount();
+    return result;
   }
 
   async deleteById(userId: number) {
