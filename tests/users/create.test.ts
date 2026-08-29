@@ -148,8 +148,8 @@ describe("POST /users", () => {
         .set("Cookie", [`accessToken=${adminAccessToken};`]);
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveLength(2);
-      expect(response.body[0]).not.toHaveProperty("password");
+      expect(response.body.data).toHaveLength(2);
+      expect(response.body.data[0]).not.toHaveProperty("password");
     });
     // it.todo("get single user", async () => {
     //   const userData = {
