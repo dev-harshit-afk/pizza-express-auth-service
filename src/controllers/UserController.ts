@@ -43,7 +43,7 @@ export class UserController {
         return res.status(400).json({ errors: result.array() });
       }
       const userId = req.params.id;
-      const { firstName, lastName, role } = req.body;
+      const { firstName, lastName, role, tenantId } = req.body;
 
       if (isNaN(Number(userId))) {
         next(createHttpError(400, "Invalid user id"));
@@ -53,6 +53,7 @@ export class UserController {
         firstName,
         lastName,
         role,
+        tenantId,
       });
 
       return res.status(200).json({

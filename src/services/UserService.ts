@@ -68,7 +68,12 @@ export class UserService {
 
   async update(
     userId: number,
-    userData: { firstName?: string; lastName?: string; role?: string },
+    userData: {
+      firstName?: string;
+      lastName?: string;
+      role?: string;
+      tenantId?: string;
+    },
   ) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
@@ -77,9 +82,13 @@ export class UserService {
     }
 
     try {
-      return await this.userRepository.update(userId, userData);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      return await this.userRepository.update(userId, {
+        ...userData,
+        tenant: userData.tenantId ? { id: userData.tenantId } : undefined,
+      });
+       
     } catch (e) {
+      console.log(e);
       const error = createHttpError(500, "Failed to update data in db");
       throw error;
     }
