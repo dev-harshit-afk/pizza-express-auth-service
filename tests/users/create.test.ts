@@ -151,6 +151,120 @@ describe("POST /users", () => {
       expect(response.body.data).toHaveLength(2);
       expect(response.body.data[0]).not.toHaveProperty("password");
     });
+
+    it("get user list by name search", async () => {
+      const userRepository = connection.getRepository(User);
+
+      await userRepository.save({
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        password: "password123",
+        tenantId: 1,
+        role: Roles.CUSTOMER,
+      });
+
+      await userRepository.save({
+        firstName: "Jane",
+        lastName: "Smith",
+        email: "jane.smith@example.com",
+        password: "password123",
+        tenantId: 1,
+        role: Roles.CUSTOMER,
+      });
+
+      const adminAccessToken = jwks.token({
+        sub: 1,
+        role: Roles.ADMIN,
+      });
+
+      const response = await request(app)
+        .get("/users")
+        .query({ q: "John Doe" })
+        .set("Cookie", [`accessToken=${adminAccessToken};`]);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].firstName).toBe("John");
+      expect(response.body.data[0].lastName).toBe("Doe");
+    });
+    it("get user list by email search", async () => {
+      const userRepository = connection.getRepository(User);
+
+      await userRepository.save({
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        password: "password123",
+        tenantId: 1,
+        role: Roles.CUSTOMER,
+      });
+
+      await userRepository.save({
+        firstName: "Jane",
+        lastName: "Smith",
+        email: "jane.smith@example.com",
+        password: "password123",
+        tenantId: 1,
+        role: Roles.CUSTOMER,
+      });
+
+      const adminAccessToken = jwks.token({
+        sub: 1,
+        role: Roles.ADMIN,
+      });
+
+      const response = await request(app)
+        .get("/users")
+        .query({ q: "jane.smith@example.com" })
+        .set("Cookie", [`accessToken=${adminAccessToken};`]);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].email).toBe("jane.smith@example.com");
+    });
+    it("get user list by search and role", async () => {
+      const userRepository = connection.getRepository(User);
+
+      await userRepository.save({
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        password: "password123",
+        tenantId: 1,
+        role: Roles.CUSTOMER,
+      });
+
+      await userRepository.save({
+        firstName: "John",
+        lastName: "Smith",
+        email: "john.smith@example.com",
+        password: "password123",
+        tenantId: 1,
+        role: Roles.ADMIN,
+      });
+
+      const adminAccessToken = jwks.token({
+        sub: 1,
+        role: Roles.ADMIN,
+      });
+
+      const response = await request(app)
+        .get("/users")
+        .query({
+          q: "John",
+          role: Roles.CUSTOMER,
+          currentPage: 1,
+          perPage: 2,
+        })
+        .set("Cookie", [`accessToken=${adminAccessToken};`]);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0].firstName).toBe("John");
+      expect(response.body.data[0].role).toBe(Roles.CUSTOMER);
+    });
+
     // it.todo("get single user", async () => {
     //   const userData = {
     //     firstName: "John",
