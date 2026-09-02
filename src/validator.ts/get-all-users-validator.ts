@@ -11,6 +11,23 @@ export default checkSchema(
         },
       },
     },
+
+    q: {
+      trim: true,
+      customSanitizer: {
+        options: (value) => {
+          return value ? value : "";
+        },
+      },
+    },
+    role: {
+      customSanitizer: {
+        options: (value) => {
+          return value ? value : "";
+        },
+      },
+    },
+
     perPage: {
       customSanitizer: {
         options: (value) => {

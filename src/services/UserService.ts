@@ -1,4 +1,4 @@
-import type { Repository, DeepPartial } from "typeorm";
+import { type Repository, type DeepPartial, Brackets } from "typeorm";
 import { User } from "../entities/User";
 import type { UserData, UserQueryParams } from "../types/index";
 import createHttpError from "http-errors";
@@ -86,7 +86,6 @@ export class UserService {
         ...userData,
         tenant: userData.tenantId ? { id: userData.tenantId } : undefined,
       });
-       
     } catch (e) {
       console.log(e);
       const error = createHttpError(500, "Failed to update data in db");
@@ -94,12 +93,30 @@ export class UserService {
     }
   }
   async getAll(validateQuery: UserQueryParams) {
-    const queryBuilder = this.userRepository.createQueryBuilder();
+    const queryBuilder = this.userRepository.createQueryBuilder("user");
 
+    if (validateQuery.q) {
+      const searchQuery = `%${validateQuery.q}%`;
+
+      queryBuilder.where(
+        new Brackets((qb) => {
+          qb.where("CONCAT(user.firstName, ' ', user.lastName) ILIKE :q", {
+            q: searchQuery,
+          }).orWhere("user.email ILIKE :q", { q: searchQuery });
+        }),
+      );
+    }
+
+    if (validateQuery.role) {
+      queryBuilder.andWhere("user.role = :role", { role: validateQuery.role });
+    }
     const result = await queryBuilder
+      .leftJoinAndSelect("user.tenant", "tenant")
       .skip((validateQuery.currentPage - 1) * validateQuery.perPage)
       .take(validateQuery.perPage)
+      .orderBy("user.id", "DESC")
       .getManyAndCount();
+
     return result;
   }
 
