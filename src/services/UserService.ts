@@ -82,10 +82,14 @@ export class UserService {
     }
 
     try {
-      return await this.userRepository.update(userId, {
-        ...userData,
-        tenant: userData.tenantId ? { id: userData.tenantId } : undefined,
-      });
+      const { tenantId, ...userFields } = userData;
+      const updatePayload: DeepPartial<User> = { ...userFields };
+
+      if (tenantId !== undefined) {
+        updatePayload.tenant = { id: Number(tenantId) };
+      }
+
+      return await this.userRepository.update(userId, updatePayload);
     } catch (e) {
       console.log(e);
       const error = createHttpError(500, "Failed to update data in db");
