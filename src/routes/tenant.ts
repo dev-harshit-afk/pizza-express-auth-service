@@ -8,6 +8,7 @@ import authenticate from "../middlewares/authenticate";
 import canAccess from "../middlewares/canAccess";
 import { Roles } from "../constants";
 import tenantValidator from "../validator.ts/tenant-validator";
+import getAllTenantsValidator from "../validator.ts/get-all-tenants-validator";
 const tenantRepository = AppDataSource.getRepository(Tenant);
 const tenantService = new TenantService(tenantRepository);
 const tenantController = new TenantController(tenantService, logger);
@@ -30,8 +31,11 @@ router.patch(
   (req: Request, res: Response, next: NextFunction) =>
     tenantController.update(req, res, next),
 );
-router.get("/", (req: Request, res: Response, next: NextFunction) =>
-  tenantController.getAll(req, res, next),
+router.get(
+  "/",
+  getAllTenantsValidator,
+  (req: Request, res: Response, next: NextFunction) =>
+    tenantController.getAll(req, res, next),
 );
 router.get(
   "/:id",

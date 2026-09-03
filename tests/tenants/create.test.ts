@@ -158,7 +158,7 @@ describe("POST /tenants", () => {
 
       const tenants = await connection.getRepository("Tenant").find();
       // Assert
-      expect(response.body?.length).toBe(tenants.length);
+      expect(response.body?.total).toBe(tenants.length);
     });
     it("should get single tenant by id", async () => {
       const tenantData = {
